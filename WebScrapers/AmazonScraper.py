@@ -21,12 +21,13 @@ class AmazonScrapy(CrawlSpider):
     current_dir_Length = len(current_dir_name) - 11
     project_dir_name = current_dir_name[:current_dir_Length]
     # open csv writer
-    file_name = os.path.join(project_dir_name, 'dataStorage/AmazonSearch.csv')
+    file_name = os.path.join(project_dir_name, 'dataStorage\AmazonSearch.csv')
     file = open(file_name, 'w')
 
     search_writer = csv.writer(file, delimiter=',')
     def parse_item(self,response):
         class_selector ='.s-item-container'
+        #used to get the specific fields of the webpage
         for item in response.css(class_selector):
             name_selector= 'a>h2 ::text'
             price_selector= '.a-offscreen ::text'
