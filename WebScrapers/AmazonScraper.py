@@ -1,5 +1,5 @@
-import scrapy
 import csv
+import os
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 
@@ -16,10 +16,16 @@ class AmazonScrapy(CrawlSpider):
 
     # def setBaseURL(self,URL):
     #     start_urls = URL
+    # get the dir of the data storage
+    current_dir_name = os.path.dirname(__file__)
+    current_dir_Length = len(current_dir_name) - 11
+    project_dir_name = current_dir_name[:current_dir_Length]
+    # open csv writer
+    file_name = os.path.join(project_dir_name, 'dataStorage/AmazonSearch.csv')
+    file = open(file_name, 'w')
 
+    search_writer = csv.writer(file, delimiter=',')
     def parse_item(self,response):
-        file_name = open('dataStorage/AmazonSearch.csv', 'w')
-        search_writer = csv.writer(file_name, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         class_selector ='.s-item-container'
         for item in response.css(class_selector):
             name_selector= 'a>h2 ::text'
@@ -27,13 +33,10 @@ class AmazonScrapy(CrawlSpider):
             rank_selector='a>i ::text'
             url_selector='a::attr(href)'
             img_url_selector='a>img::attr(src)'
-            yield {
-                'name': item.css(name_selector).extract_first(),
-                'price': item.css(price_selector).extract_first(),
-                'ranking': item.css(rank_selector).extract_first(),
-                'url': item.css(url_selector).extract_first(),
-                'imgURL': item.css(img_url_selector).extract_first()
-            }
+            self.search_writer.writerow([item.css(name_selector).extract_first(), item.css(price_selector).extract_first(), item.css(rank_selector).extract_first(),
+                                   item.css(url_selector).extract_first(),item.css(img_url_selector).extract_first()])
+
+
 
 
 
